@@ -411,18 +411,20 @@
       return;
     }
   });
-
   /* ===============================
-   BỔ SUNG CHỨC NĂNG SIDEBAR: HISTORY + MEMORY
+   BỔ SUNG CHỨC NĂNG SIDEBAR: HISTORY + MEMORY (STACK MODE)
    =============================== */
 
+  // Lấy phần tử DOM trong sidebar
   const historyTab = document.querySelector(".tabs button:nth-child(1)");
   const memoryTab = document.querySelector(".tabs button:nth-child(2)");
   const sidebarBody = document.querySelector(".sidebar-body");
 
+  // Dữ liệu lưu trữ
   let historyList = [];
-  let memoryValue = null;
+  let memoryStack = []; // stack: phần tử 0 là đáy, phần tử cuối là đỉnh (top)
 
+  // Hàm cập nhật giao diện sidebar
   function renderSidebar() {
     sidebarBody.innerHTML = "";
     const activeTab = historyTab.classList.contains("active")
@@ -442,64 +444,52 @@
           .forEach((item) => {
             const li = document.createElement("li");
             li.className = "history-item";
-            li.innerHTML = `
-              <div class="expr">${item.expr}</div>
-              <div class="res">${item.result}</div>
-            `;
+            li.innerHTML = `<div class="expr">${item.expr}</div><div class="res">${item.result}</div>`;
             li.addEventListener("click", () => {
               currentStr = String(item.result);
               operands = [];
               operators = [];
-              justCalculated = true;
               updateDisplays();
             });
             ul.appendChild(li);
           });
+
         sidebarBody.appendChild(ul);
       }
     }
-    // --- Tab Memory ---
+
+    // --- Tab Memory (Stack) ---
     else {
-      if (memoryValue === null) {
+      if (memoryStack.length === 0) {
         sidebarBody.innerHTML = `<p>There's nothing saved in memory.</p>`;
       } else {
-        const div = document.createElement("div");
-        div.className = "memory-view";
-        div.innerHTML = `
-          <div class="memory-val">${formatNumberForDisplay(memoryValue)}</div>
-          <div class="memory-btns">
-            <button class="mem-clear">MC</button>
-            <button class="mem-add">M+</button>
-            <button class="mem-sub">M−</button>
-          </div>
+        const ul = document.createElement("ul");
+        ul.className = "memory-list";
+        // hiển thị từ đỉnh xuống đáy (top first)
+        memoryStack
+          .slice()
+          .reverse()
+          .forEach((val, index) => {
+            const li = document.createElement("li");
+            li.className = "memory-item";
+            li.innerHTML = `
+          <div class="mem-val">${formatNumberForDisplay(val)}</div>
         `;
-        sidebarBody.appendChild(div);
+            // Click vào phần tử để hiển thị ra display
+            li.addEventListener("click", () => {
+              currentStr = String(val);
+              updateDisplays();
+            });
 
-        const mc = div.querySelector(".mem-clear");
-        const mAdd = div.querySelector(".mem-add");
-        const mSub = div.querySelector(".mem-sub");
+            ul.appendChild(li);
+          });
 
-        mc.addEventListener("click", () => {
-          memoryValue = null;
-          renderSidebar();
-        });
-
-        mAdd.addEventListener("click", () => {
-          const val = Number(currentStr || 0);
-          memoryValue = (memoryValue || 0) + val;
-          renderSidebar();
-        });
-
-        mSub.addEventListener("click", () => {
-          const val = Number(currentStr || 0);
-          memoryValue = (memoryValue || 0) - val;
-          renderSidebar();
-        });
+        sidebarBody.appendChild(ul);
       }
     }
   }
 
-  // ⚠️ Sự kiện chuyển tab
+  // Chuyển tab giữa History / Memory
   historyTab.addEventListener("click", () => {
     historyTab.classList.add("active");
     memoryTab.classList.remove("active");
@@ -511,45 +501,64 @@
     renderSidebar();
   });
 
-  // ⚠️ Ghi lại lịch sử mỗi khi nhấn "=" (không override hàm)
-  const oldPressEquals = pressEquals;
+  // Ghi lại lịch sử mỗi khi nhấn "="
+  const originalPressEquals = pressEquals;
   pressEquals = function () {
     const beforeEval = displaySecondary.textContent;
-    oldPressEquals();
+    originalPressEquals();
     if (currentStr !== "Error" && beforeEval.trim() !== "") {
       historyList.push({ expr: beforeEval, result: currentStr });
     }
     renderSidebar();
   };
 
-  // ⚠️ Gán sự kiện cho các nút Memory hàng trên
+  // Các nút bộ nhớ (MC, MR, M+, M−, MS)
   document.querySelectorAll(".memory-row button").forEach((btn) => {
     btn.addEventListener("click", () => {
       const text = btn.textContent.trim();
       const val = Number(currentStr || 0);
+
       switch (text) {
-        case "MS":
-          memoryValue = val;
-          break;
         case "MC":
-          memoryValue = null;
+          memoryStack = [];
           break;
         case "MR":
-          if (memoryValue !== null) {
-            currentStr = String(memoryValue);
+          if (memoryStack.length > 0) {
+            const topVal = memoryStack.pop(); // lấy phần tử trên cùng
+            currentStr = String(topVal);
+            updateDisplays();
+          } else {
+            currentStr = "0";
             updateDisplays();
           }
           break;
         case "M+":
-          memoryValue = (memoryValue || 0) + val;
+          if (memoryStack.length === 0) memoryStack.push(0);
+          memoryStack[memoryStack.length - 1] += val;
           break;
         case "M−":
-          memoryValue = (memoryValue || 0) - val;
+          if (memoryStack.length === 0) memoryStack.push(0);
+          memoryStack[memoryStack.length - 1] -= val;
+          break;
+        case "MS":
+          if (memoryStack.length > 0) {
+            // đẩy phần tử hiện tại lên top, các phần tử cũ xuống
+            memoryStack.push(val);
+          } else {
+            memoryStack.push(val);
+          }
           break;
       }
       renderSidebar();
     });
   });
+
+  // Khởi tạo giao diện sidebar
+  renderSidebar();
+
+  /* ===============================
+   KẾT THÚC PHẦN MỞ RỘNG (STACK MEMORY + HISTORY)
+   =============================== */
 
   // ----- Khởi tạo -----
   clearAll();

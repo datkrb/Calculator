@@ -109,6 +109,9 @@ body {
 .display__secondary {
   font-size: 0.9rem;
   color: var(--muted);
+  size: 24px;
+  min-height: 12px;
+  max-height: 12px;
 }
 .display__primary {
   font-size: 2.6rem;
@@ -120,15 +123,15 @@ body {
 .keypad {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 5px;
   flex: 1;
 }
 
 .keypad button {
   background: var(--key-bg);
   border: 1px solid var(--key-border);
-  border-radius: 8px;
-  font-size: 1.1rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -178,10 +181,32 @@ body {
   font-size: 0.95rem;
   color: var(--muted);
   line-height: 1.5;
+
+  & ul.history-list li {
+    list-style: none;
+    margin-bottom: 8px;
+
+    & .expr {
+      font-size: 12px;
+      justify-self: end;
+    }
+    & .res {
+      justify-self: end;
+      font-weight: bold;
+      font-size: 24px;
+    }
+  }
+
+  & ul.memory-list li {
+    list-style: none;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 24px;
+  }
 }
 
 /* responsive */
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .app-window {
     width: 95%;
     height: auto;
