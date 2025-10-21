@@ -1,0 +1,198 @@
+/* Windows 11 Calculator replica UI */
+:root {
+  --bg1: #f5f2f9;
+  --bg2: #ede8f5;
+  --calc-bg: #ffffffc5;
+  --key-bg: #ffffff;
+  --key-hover: #f6f6f9;
+  --key-border: #dcdfe6;
+  --blue: #064bc1;
+  --text: #111;
+  --muted: #666;
+  --font: "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+.app-window {
+  width: 100%;
+  height: 100%;
+  background: var(--calc-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.window-controls span {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* mode */
+.mode-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  color: var(--text);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* main layout */
+.main {
+  display: flex;
+  flex: 1;
+}
+
+/* calculator panel */
+.calculator {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.memory-row {
+  display: flex;
+  width: 60%;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.memory-row button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.memory-row button:hover {
+  background: var(--key-hover);
+}
+
+/* display */
+.display {
+  background: #fafafc;
+  border-radius: 8px;
+  text-align: right;
+  padding: 20px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.05);
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+}
+.display__secondary {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.display__primary {
+  font-size: 2.6rem;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* keypad grid */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  flex: 1;
+}
+
+.keypad button {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.keypad button:hover {
+  background: var(--key-hover);
+}
+.keypad button:active {
+  transform: scale(0.97);
+}
+
+.operator {
+  color: #ff8a00;
+  font-weight: 600;
+}
+.equals {
+  background-color: var(--blue) !important;
+  color: white;
+}
+
+/* sidebar */
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.7);
+}
+.tabs {
+  display: flex;
+  justify-content: space-evenly;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.tabs button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  padding: 10px 0;
+  cursor: pointer;
+  color: var(--muted);
+}
+.tabs .active {
+  color: var(--blue);
+  border-bottom: 2px solid var(--blue);
+}
+.sidebar-body {
+  padding: 20px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* responsive */
+@media (max-width: 800px) {
+  .app-window {
+    width: 95%;
+    height: auto;
+  }
+  .main {
+    flex-direction: column;
+  }
+  .sidebar {
+    display: hidden;
+    order: -1;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}

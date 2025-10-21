@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Windows 11 Calculator Replica</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- App container -->
+    <div class="app-window">
+      <div class="main">
+        <!-- Left: calculator -->
+        <section class="calculator">
+          <!-- Display -->
+          <div class="display">
+            <div class="display__secondary">There's no history yet.</div>
+            <div class="display__primary">0</div>
+          </div>
+
+          <!-- Memory buttons -->
+          <div class="memory-row">
+            <button>MC</button>
+            <button>MR</button>
+            <button>M+</button>
+            <button>M−</button>
+            <button>MS</button>
+          </div>
+
+          <!-- Buttons -->
+          <div class="keypad">
+            <!-- Row 1 -->
+            <button>%</button>
+            <button>CE</button>
+            <button>C</button>
+            <button class="fn">⌫</button>
+            <!-- Row 2 -->
+            <button>√x</button>
+            <button>x²</button>
+            <button>1/x</button>
+            <button class="operator">÷</button>
+            <!-- Row 3 -->
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+            <button class="operator">×</button>
+            <!-- Row 4 -->
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+            <button class="operator">−</button>
+            <!-- Row 5 -->
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button class="operator">+</button>
+            <!-- Row 6 -->
+            <button>+/−</button>
+            <button>0</button>
+            <button>.</button>
+            <button class="equals">=</button>
+          </div>
+        </section>
+
+        <!-- Right: history / memory -->
+        <aside class="sidebar">
+          <div class="tabs">
+            <button class="active">History</button>
+            <button>Memory</button>
+          </div>
+          <div class="sidebar-body">
+            <p>There's no history yet.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
