@@ -53,8 +53,15 @@
       if (i < operators.length) parts.push(operators[i]);
     }
     if (currentStr !== "") parts.push(currentStr);
-    // Nếu không có biểu thức, xóa sạch displaySecondary
-    displaySecondary.textContent = parts.length === 0 ? "" : parts.join(" ");
+    // Nếu vừa clear hoặc vừa chọn lại từ history/memory, xóa sạch displaySecondary
+    if (
+      (operands.length === 0 && operators.length === 0 && currentStr === "") ||
+      (justCalculated && operands.length === 0 && operators.length === 0)
+    ) {
+      displaySecondary.textContent = "";
+    } else {
+      displaySecondary.textContent = parts.join(" ");
+    }
   }
 
   function clearAll() {
@@ -139,10 +146,6 @@
     if (currentStr !== "") operands.push(toNumber(currentStr));
 
     // ⚠️ Nếu người dùng chỉ nhập một số rồi nhấn "=" → lấy lastResult nếu có
-    if (operands.length < 2 && lastResult !== null) {
-      operands.unshift(lastResult);
-    }
-
     if (operators.length > 0 && operands.length >= 2) {
       const op = operators.pop();
       const b = operands.pop();
@@ -162,8 +165,46 @@
       justCalculated = true;
     }
 
+    // Nếu không còn biểu thức, xóa sạch displaySecondary
+    if (
+      operands.length === 0 &&
+      operators.length === 0 &&
+      currentStr !== "Error" &&
+      currentStr !== ""
+    ) {
+      displaySecondary.textContent = "";
+    }
     updateDisplays();
     renderSidebar(); // ⚠️ cập nhật lại sidebar mỗi lần nhấn "="
+    // Nếu không có phép toán, chỉ hiển thị số hiện tại
+    if (operators.length === 0 || operands.length < 2) {
+      operands = [];
+      operators = [];
+      justCalculated = true;
+      updateDisplays();
+      renderSidebar();
+      return;
+    }
+
+    // Nếu có phép toán thì thực hiện như cũ
+    const op = operators.pop();
+    const b = operands.pop();
+    const a = operands.pop();
+    const res = applyOperator(a, b, op);
+    if (res === "Error") {
+      clearAll();
+      currentStr = "Error";
+      updateDisplays();
+      return;
+    }
+
+    currentStr = formatNumberForDisplay(res);
+    lastResult = res;
+    operands = [];
+    operators = [];
+    justCalculated = true;
+    updateDisplays();
+    renderSidebar();
   }
 
   // ----- Unary functions -----
@@ -409,6 +450,7 @@
               currentStr = String(item.result);
               operands = [];
               operators = [];
+              justCalculated = true;
               updateDisplays();
             });
             ul.appendChild(li);
